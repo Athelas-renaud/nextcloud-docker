@@ -1,0 +1,30 @@
+version: "3.3"
+
+volumes:
+  nextcloud:
+  db:
+
+services:
+  db:
+    image: mariadb
+    container_name: "db"
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: always
+    volumes:
+      - db_save:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=Thisisasuperrootpassword
+      - MYSQL_PASSWORD=Thisisanotheruserpassword
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+
+  app:
+    image: nextcloud
+    links:
+      - db
+    volumes:
+      - nextcloud:/var/www/html
+    ports:
+      - 9090:80
+    restart: always
+    container_name: "nextcloud"
